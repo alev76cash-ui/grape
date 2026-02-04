@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}📊 Статистика базы данных{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1 class="display-5 fw-bold text-dark">
+            <i class="fas fa-chart-bar me-2 text-primary"></i>Статистика базы данных
+        </h1>
+        <p class="lead text-dark">Обзорная информация и аналитика по сортам винограда</p>
+    </div>
+    <div class="col-md-4 text-end">
+        <div class="d-flex gap-2 justify-content-end">
+            <a href="{{ url_for('admin_home') }}" class="btn btn-outline-primary">
+                <i class="fas fa-arrow-left me-2"></i>Назад
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Основные показатели -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white shadow-sm">
+            <div class="card-body text-center">
+                <h2 class="display-6 fw-bold">{{ total }}</h2>
+                <p class="mb-0">Всего сортов</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white shadow-sm">
+            <div class="card-body text-center">
+                <h2 class="display-6 fw-bold">{{ purpose_stats|length }}</h2>
+                <p class="mb-0">Категорий назначений</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white shadow-sm">
+            <div class="card-body text-center">
+                <h2 class="display-6 fw-bold">{{ color_stats|length }}</h2>
+                <p class="mb-0">Цветов ягод</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-white shadow-sm">
+            <div class="card-body text-center">
+                <h2 class="display-6 fw-bold">{{ activity_stats|length }}</h2>
+                <p class="mb-0">Дней активности</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Статистика по назначениям -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-wine-glass-alt me-2 text-primary"></i>Распределение по назначению
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if purpose_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Назначение</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in purpose_stats %}
+                            <tr>
+                                <td>{{ stat.purpose }}</td>
+                                <td>{{ stat.count }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                            <div class="progress-bar bg-primary"
+                                                 style="width: {{ (stat.count / total * 100)|round(1) }}%">
+                                            </div>
+                                        </div>
+                                        <span>{{ (stat.count / total * 100)|round(1) }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-wine-glass-alt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных о назначениях</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика по цветам -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-palette me-2 text-success"></i>Распределение по цвету ягод
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if color_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Цвет</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in color_stats %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="color-indicator me-2"
+                                             style="width: 16px; height: 16px; background-color: {{ get_color_code(stat.berry_color) }}; border-radius: 50%;"></div>
+                                        {{ stat.berry_color }}
+                                    </div>
+                                </td>
+                                <td>{{ stat.count }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                            <div class="progress-bar bg-success"
+                                                 style="width: {{ (stat.count / total * 100)|round(1) }}%">
+                                            </div>
+                                        </div>
+                                        <span>{{ (stat.count / total * 100)|round(1) }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-palette fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных о цветах ягод</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика по морозостойкости -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-snowflake me-2 text-info"></i>Распределение по морозостойкости
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if frost_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Категория морозостойкости</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in frost_stats %}
+                            <tr>
+                                <td>{{ stat.frost_category }}</td>
+                                <td>{{ stat.count }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                            <div class="progress-bar bg-info"
+                                                 style="width: {{ (stat.count / total * 100)|round(1) }}%">
+                                            </div>
+                                        </div>
+                                        <span>{{ (stat.count / total * 100)|round(1) }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-snowflake fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных о морозостойкости</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Статистика по срокам созревания -->
+    <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-calendar-alt me-2 text-warning"></i>Распределение по срокам созревания
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if ripening_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Срок созревания</th>
+                                <th>Количество</th>
+                                <th>Процент</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in ripening_stats %}
+                            <tr>
+                                <td>{{ stat.ripening_category }}</td>
+                                <td>{{ stat.count }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 8px;">
+                                            <div class="progress-bar bg-warning"
+                                                 style="width: {{ (stat.count / total * 100)|round(1) }}%">
+                                            </div>
+                                        </div>
+                                        <span>{{ (stat.count / total * 100)|round(1) }}%</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-calendar-alt fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных о сроках созревания</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Активность за последние 30 дней -->
+    <div class="col-12 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-chart-line me-2 text-danger"></i>Активность за последние 30 дней
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if activity_stats %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Дата</th>
+                                <th>Количество действий</th>
+                                <th>График</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for stat in activity_stats %}
+                            <tr>
+                                <td>{{ stat.date }}</td>
+                                <td>{{ stat.actions }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        {% set max_actions = activity_stats|map(attribute='actions')|max %}
+                                        {% set width = (stat.actions / max_actions * 100) if max_actions > 0 else 0 %}
+                                        <div class="progress-bar bg-danger"
+                                             style="width: {{ width }}%"
+                                             role="progressbar">
+                                            {{ stat.actions }}
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-line fa-3x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных об активности</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Дополнительная информация -->
+<div class="alert alert-info mt-4">
+    <h6 class="alert-heading text-dark">
+        <i class="fas fa-info-circle me-2"></i>Информация о статистике
+    </h6>
+    <p class="mb-0 text-dark small">
+        Статистика обновляется в реальном времени. Данные собираются автоматически
+        при каждом действии пользователей и администраторов в системе.
+    </p>
+</div>
+{% endblock %}

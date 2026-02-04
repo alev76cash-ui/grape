@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block title %}🍇 Добавить новый сорт винограда{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-success text-white py-3">
+                <h2 class="h4 mb-0">
+                    <i class="fas fa-plus-circle me-2"></i>
+                    Добавить новый сорт винограда
+                </h2>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <div class="row">
+                        <!-- Левая колонка -->
+                        <div class="col-md-6">
+                            <!-- Название -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-tag text-primary me-1"></i>
+                                    Название сорта *
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="name"
+                                       name="name"
+                                       required
+                                       placeholder="Например: Лора">
+                                <div class="invalid-feedback">
+                                    Пожалуйста, введите название сорта.
+                                </div>
+                            </div>
+
+                            <!-- Назначение -->
+                            <div class="mb-3">
+                                <label for="purpose" class="form-label">
+                                    <i class="fas fa-wine-glass-alt text-info me-1"></i>
+                                    Назначение
+                                </label>
+                                <select class="form-select" id="purpose" name="purpose">
+                                    <option value="Столовый">Столовый</option>
+                                    <option value="Винный">Винный</option>
+                                    <option value="Универсальный">Универсальный</option>
+                                </select>
+                            </div>
+
+                            <!-- Срок созревания -->
+                            <div class="mb-3">
+                                <label for="ripening_period" class="form-label">
+                                    <i class="fas fa-calendar-alt text-warning me-1"></i>
+                                    Срок созревания
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="ripening_period"
+                                       name="ripening_period"
+                                       placeholder="Например: Очень ранний/95-105 дней">
+                            </div>
+
+                            <!-- Морозостойкость -->
+                            <div class="mb-3">
+                                <label for="frost_resistance" class="form-label">
+                                    <i class="fas fa-snowflake text-info me-1"></i>
+                                    Морозостойкость
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="frost_resistance"
+                                       name="frost_resistance"
+                                       placeholder="Например: -22°C">
+                            </div>
+
+                            <!-- Цвет ягод -->
+                            <div class="mb-3">
+                                <label for="berry_color" class="form-label">
+                                    <i class="fas fa-palette text-danger me-1"></i>
+                                    Цвет ягод
+                                </label>
+                                <select class="form-select" id="berry_color" name="berry_color">
+                                    <option value="">Выберите цвет...</option>
+                                    <option value="Белый">Белый</option>
+                                    <option value="Зеленый">Зеленый</option>
+                                    <option value="Розовый">Розовый</option>
+                                    <option value="Красный">Красный</option>
+                                    <option value="Синий">Синий</option>
+                                    <option value="Тёмно-синий">Тёмно-синий</option>
+                                    <option value="Фиолетовый">Фиолетовый</option>
+                                    <option value="Чёрный">Чёрный</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Правая колонка -->
+                        <div class="col-md-6">
+                            <!-- Сахар -->
+                            <div class="mb-3">
+                                <label for="sugar_content" class="form-label">
+                                    <i class="fas fa-candy-cane text-warning me-1"></i>
+                                    Содержание сахара
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="sugar_content"
+                                       name="sugar_content"
+                                       placeholder="Например: 18-22%">
+                            </div>
+
+                            <!-- Кислотность -->
+                            <div class="mb-3">
+                                <label for="acidity" class="form-label">
+                                    <i class="fas fa-lemon text-success me-1"></i>
+                                    Кислотность
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="acidity"
+                                       name="acidity"
+                                       placeholder="Например: 6-7 г/л">
+                            </div>
+
+                            <!-- Вкус -->
+                            <div class="mb-3">
+                                <label for="taste" class="form-label">
+                                    <i class="fas fa-utensils text-primary me-1"></i>
+                                    Вкус
+                                </label>
+                                <textarea class="form-control"
+                                          id="taste"
+                                          name="taste"
+                                          rows="3"
+                                          placeholder="Опишите вкусовые характеристики (сладкий, гармоничный, с мускатным оттенком и т.д.)"></textarea>
+                            </div>
+
+                            <!-- Изображение -->
+                            <div class="mb-3">
+                                <label for="image" class="form-label">
+                                    <i class="fas fa-image text-success me-1"></i>
+                                    Изображение сорта
+                                </label>
+                                <input type="file"
+                                       class="form-control"
+                                       id="image"
+                                       name="image"
+                                       accept=".png,.jpg,.jpeg,.gif,.webp">
+                                <div class="form-text">
+                                    Поддерживаемые форматы: PNG, JPG, JPEG, GIF, WebP. Максимальный размер: 16MB.
+                                </div>
+                            </div>
+
+                            <!-- Подсказка про изображение -->
+                            <div class="alert alert-info mt-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Если изображение не загружено, будет использовано изображение по умолчанию.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('admin_home') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Назад
+                        </a>
+                        <button type="submit" class="btn btn-success px-4">
+                            <i class="fas fa-save me-2"></i>Сохранить сорт
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Подсказки -->
+        <div class="card border-0 bg-light mt-4">
+            <div class="card-body">
+                <h5 class="card-title text-dark">
+                    <i class="fas fa-lightbulb text-warning me-2"></i>
+                    Подсказки по заполнению:
+                </h5>
+                <ul class="mb-0 text-dark">
+                    <li><strong>Название</strong> - обязательно для заполнения и должно быть уникальным</li>
+                    <li><strong>Срок созревания</strong> - можно указать категорию и дни (например: "Очень ранний/95-105 дней")</li>
+                    <li><strong>Морозостойкость</strong> - указывайте в градусах Цельсия (например: "-22°C")</li>
+                    <li><strong>Вкус</strong> - можно перечислить характеристики через запятую</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Валидация формы
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Предпросмотр изображения
+const imageInput = document.getElementById('image');
+const imagePreview = document.getElementById('imagePreview');
+
+if (imageInput) {
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                if (!imagePreview) {
+                    // Создаем контейнер для предпросмотра
+                    const previewContainer = document.createElement('div');
+                    previewContainer.id = 'imagePreview';
+                    previewContainer.className = 'mt-3 text-center';
+
+                    const img = document.createElement('img');
+                    img.src = e.target.result;
+                    img.className = 'img-fluid rounded shadow';
+                    img.style.maxHeight = '200px';
+
+                    previewContainer.appendChild(img);
+                    imageInput.parentNode.appendChild(previewContainer);
+                } else {
+                    imagePreview.querySelector('img').src = e.target.result;
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+}
+</script>
+{% endblock %}

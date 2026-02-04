@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍇 Административная панель — База данных винограда</title>
+
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #2c3e50 0%, #4a6491 100%);
+            color: white;
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: none;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-group-sm .btn {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .table th {
+            font-weight: 600;
+            background-color: #f1f5f9;
+            border-top: none;
+        }
+        .table-sm th, .table-sm td {
+            padding: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .compact-table .btn-group-sm .btn {
+            padding: 0.2rem 0.4rem;
+            font-size: 0.8rem;
+        }
+
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        .action-buttons {
+            min-width: 120px;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .table-responsive {
+                font-size: 0.8rem;
+            }
+
+            .action-buttons {
+                min-width: 90px;
+            }
+
+            .btn-group-sm .btn {
+                padding: 0.15rem 0.3rem;
+                font-size: 0.75rem;
+            }
+        }
+        .pagination .page-link {
+            color: #2c3e50;
+            border-color: #dee2e6;
+        }
+
+        .pagination .active .page-link {
+            background-color: #2c3e50;
+            border-color: #2c3e50;
+        }
+
+        .search-box {
+            max-width: 400px;
+        }
+
+        .action-buttons {
+            white-space: nowrap;
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+        }
+        /* Улучшаем видимость активного пункта навигации */
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .nav-link.active i {
+            color: #ffd700; /* Золотой цвет для иконки */
+        }
+
+        /* Стиль для бренда (не кликабельного) */
+        .navbar-brand {
+            cursor: default;
+            opacity: 0.9;
+        }
+        /* Исправляем выпадающее меню */
+        .dropdown-menu {
+            z-index: 1060 !important; /* Выше чем у таблицы */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border: none;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 5px !important;
+        }
+
+        /* Убираем моргание при наведении */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Анимация появления */
+        .dropdown-menu {
+            animation: fadeInDropdown 0.2s ease-out;
+        }
+
+        @keyframes fadeInDropdown {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Исправляем для таблицы */
+        .table-responsive {
+            position: relative;
+            z-index: 1; /* Ниже чем выпадающее меню */
+        }
+
+        /* Улучшаем внешний вид выпадающего меню */
+        .dropdown-item {
+            padding: 0.6rem 1rem;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .dropdown-item:hover {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-left-color: var(--grape-primary);
+            padding-left: 1.2rem;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 10px;
+            color: var(--grape-primary);
+        }
+
+        .dropdown-divider {
+            margin: 0.3rem 0;
+        }
+        /* Стили для быстрой сортировки */
+        .dropdown-item.active {
+            background-color: rgba(106, 13, 173, 0.1);
+            color: var(--grape-primary);
+            font-weight: 500;
+        }
+
+        .dropdown-item i.bi-check2 {
+            color: var(--grape-primary);
+            font-weight: bold;
+        }
+
+        .dropdown-header {
+            font-size: 0.8rem;
+            color: #6c757d;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-outline-primary.dropdown-toggle {
+            border-color: #dee2e6;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .btn-outline-primary.dropdown-toggle:hover {
+            border-color: var(--grape-primary);
+            background-color: rgba(106, 13, 173, 0.05);
+        }
+
+        /* Убираем стандартный маркер у активного элемента */
+        .dropdown-item.active::before {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-dark admin-header">
+        <div class="container">
+            <!-- Бренд без ссылки на текущую страницу -->
+
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <!-- Таблица сортов - активна при просмотре таблицы -->
+                        <span class="nav-link active">
+                            <i class="bi bi-table"></i> Таблица сортов
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('add_variety') }}">
+                            <i class="bi bi-plus-circle"></i> Добавить сорт
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear"></i> Управление
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{{ url_for('admin_columns') }}">
+                                <i class="bi bi-layout-three-columns"></i> Настройка столбцов
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('email_subscribers') }}">
+                                <i class="bi bi-envelope"></i> Подписчики email
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{{ url_for('export_all') }}">
+                                <i class="bi bi-download"></i> Экспорт данных
+                            </a></li>
+                            <li><a class="dropdown-item" href="{{ url_for('import_csv') }}">
+                                <i class="bi bi-upload"></i> Импорт CSV
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <div class="navbar-nav">
+                    <span class="nav-text me-3">
+                        <i class="bi bi-person-circle"></i> Администратор
+                    </span>
+                    <a class="btn btn-outline-light btn-sm" href="{{ url_for('user_home') }}">
+                        <i class="bi bi-eye"></i> Пользовательский вид
+                    </a>
+                    <a class="btn btn-danger btn-sm ms-2" href="{{ url_for('admin_logout') }}">
+                        <i class="bi bi-box-arrow-right"></i> Выйти
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Заголовок и поиск -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h1 class="h3 mb-0">
+                    <i class="bi bi-grapes text-primary"></i> Управление сортами винограда
+                </h1>
+                <p class="text-muted">
+                    Всего сортов: <strong>{{ total }}</strong> |
+                    Показано: <strong>{{ varieties|length }}</strong> на странице {{ page }} из {{ total_pages }}
+                </p>
+            </div>
+
+            <div class="col-md-4">
+                <form method="GET" action="{{ url_for('admin_home') }}">
+                    <div class="input-group search-group-glass">
+                        <input type="text"
+                            name="search"
+                            class="form-control search-input-glass"
+                            placeholder="Поиск по названию..."
+                            value="{{ search }}"
+                            aria-label="Поиск">
+                        <input type="hidden" name="page" value="1">
+                        <button type="submit" class="btn search-btn-glass">
+                            <i class="bi bi-search"></i><span class="btn-text">Найти</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Панель управления -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+
+                    </div>
+
+                    <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                        <div class="text-muted small">
+                            <i class="bi bi-info-circle"></i>
+                            Выбрано столбцов: <strong>{{ visible_columns|length }}</strong>
+                            | Сортировка: <strong>
+                                {% if sort == 'id' %}ID
+                                {% elif sort == 'name' %}Название
+                                {% elif sort == 'purpose' %}Назначение
+                                {% elif sort == 'ripening_period' %}Срок созревания
+                                {% elif sort == 'frost_resistance' %}Морозостойкость
+                                {% elif sort == 'berry_color' %}Цвет ягод
+                                {% elif sort == 'taste' %}Вкус
+                                {% elif sort == 'sugar_content' %}Сахар
+                                {% elif sort == 'acidity' %}Кислотность
+                                {% elif sort == 'created_at' %}Дата добавления
+                                {% else %}{{ sort }}
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Флеш-сообщения -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' if category == 'success' else 'info' }}
+                                alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Основная таблица -->
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover table-sm compact-table">
+                        <thead class="table-light">
+                            <tr>
+                                {% set column_names = {
+                                    'id': 'ID',
+                                    'name': 'Название',
+                                    'purpose': 'Назначение',
+                                    'ripening_period': 'Срок созревания',
+                                    'frost_resistance': 'Морозостойкость',
+                                    'berry_color': 'Цвет ягод',
+                                    'taste': 'Вкус',
+                                    'sugar_content': 'Сахар',
+                                    'acidity': 'Кислотность',
+                                    'created_at': 'Дата добавления'
+                                } %}
+
+                                {% for col_id in visible_columns %}
+                                    {% if col_id == sort %}
+                                    <th>
+                                        <a href="?sort={{ col_id }}&order={% if order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search|urlencode }}&page={{ page }}"
+                                           class="text-decoration-none text-dark">
+                                            {{ column_names.get(col_id, col_id) }}
+                                            {% if order == 'asc' %}
+                                                <i class="bi bi-arrow-up"></i>
+                                            {% else %}
+                                                <i class="bi bi-arrow-down"></i>
+                                            {% endif %}
+                                        </a>
+                                    </th>
+                                    {% else %}
+                                    <th>
+                                        <a href="?sort={{ col_id }}&order=asc&search={{ search|urlencode }}&page={{ page }}"
+                                           class="text-decoration-none text-dark">
+                                            {{ column_names.get(col_id, col_id) }}
+                                        </a>
+                                    </th>
+                                    {% endif %}
+                                {% endfor %}
+                                <th class="text-center">Действия</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for variety in varieties %}
+                            <tr>
+                                {% for col_id in visible_columns %}
+                                    <td>
+                                        {% if col_id == 'name' %}
+                                            <a href="{{ url_for('view_variety', id=variety.id) }}"
+                                               class="text-decoration-none fw-bold text-primary">
+                                                {{ variety[col_id] or '-' }}
+                                            </a>
+                                        {% elif col_id == 'frost_resistance' and variety[col_id] %}
+                                            <span class="badge {% if '-2' in variety[col_id] %}bg-info
+                                                             {% elif '-3' in variety[col_id] %}bg-warning
+                                                             {% elif '-4' in variety[col_id] %}bg-danger
+                                                             {% else %}bg-secondary{% endif %}">
+                                                {{ variety[col_id] }}
+                                            </span>
+                                        {% elif col_id == 'berry_color' and variety[col_id] %}
+                                            <span class="d-inline-flex align-items-center">
+                                                <span class="color-dot me-2"
+                                                      style="background-color: {{ get_color_code(variety[col_id]) }};"></span>
+                                                {{ variety[col_id] }}
+                                            </span>
+                                        {% elif col_id == 'created_at' and variety[col_id] %}
+                                            <small class="text-muted">{{ variety[col_id][:10] }}</small>
+                                        {% elif col_id == 'purpose' and variety[col_id] %}
+                                            <span class="badge {% if variety[col_id] == 'Столовый' %}bg-success
+                                                             {% elif variety[col_id] == 'Винный' %}bg-primary
+                                                             {% elif variety[col_id] == 'Универсальный' %}bg-warning
+                                                             {% else %}bg-secondary{% endif %}">
+                                                {{ variety[col_id] }}
+                                            </span>
+                                        {% else %}
+                                            {{ variety[col_id] or '-' }}
+                                        {% endif %}
+                                    </td>
+                                {% endfor %}
+
+                                <td class="action-buttons text-center">
+                                    <div class="btn-group" role="group">
+                                        <a href="{{ url_for('view_variety', id=variety.id) }}"
+                                           class="btn btn-sm btn-outline-info"
+                                           title="Просмотр">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+
+                                        <a href="{{ url_for('edit_variety', id=variety.id) }}"
+                                           class="btn btn-sm btn-outline-warning"
+                                           title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        <form action="{{ url_for('delete_variety', id=variety.id) }}"
+                                              method="POST"
+                                              class="d-inline"
+                                              onsubmit="return confirm('Вы уверены, что хотите удалить сорт «{{ variety.name }}»?');">
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="Удалить">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="{{ visible_columns|length + 1 }}" class="text-center py-4">
+                                    <div class="text-muted">
+                                        <i class="bi bi-inbox" style="font-size: 3rem;"></i>
+                                        <h5 class="mt-2">Сортов не найдено</h5>
+                                        {% if search %}
+                                            <p>Попробуйте изменить параметры поиска</p>
+                                            <a href="{{ url_for('admin_home') }}" class="btn btn-primary mt-2">
+                                                Сбросить поиск
+                                            </a>
+                                        {% else %}
+                                            <p>База данных пуста. Добавьте первый сорт!</p>
+                                            <a href="{{ url_for('add_variety') }}" class="btn btn-success mt-2">
+                                                <i class="bi bi-plus-circle"></i> Добавить сорт
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Пагинация -->
+                {% if total_pages > 1 %}
+                <nav aria-label="Навигация по страницам" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- Кнопка "Назад" -->
+                        {% if page > 1 %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page-1 }}&search={{ search|urlencode }}&sort={{ sort }}&order={{ order }}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-left"></i></span>
+                        </li>
+                        {% endif %}
+
+                        <!-- Страницы -->
+                        {% for p in range(1, total_pages + 1) %}
+                            {% if p >= page-2 and p <= page+2 %}
+                                {% if p == page %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ p }}</span>
+                                </li>
+                                {% else %}
+                                <li class="page-item">
+                                    <a class="page-link"
+                                       href="?page={{ p }}&search={{ search|urlencode }}&sort={{ sort }}&order={{ order }}">
+                                        {{ p }}
+                                    </a>
+                                </li>
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <!-- Кнопка "Вперед" -->
+                        {% if page < total_pages %}
+                        <li class="page-item">
+                            <a class="page-link"
+                               href="?page={{ page+1 }}&search={{ search|urlencode }}&sort={{ sort }}&order={{ order }}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link"><i class="bi bi-chevron-right"></i></span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- ИНФОРМАЦИЯ О НАСТРОЙКАХ -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-muted small">
+                                <i class="bi bi-info-circle text-primary me-2"></i>
+                                <strong>Выбрано столбцов: {{ visible_columns|length }}</strong>
+                            </div>
+
+                            <!-- Быстрая сортировка выпадающим меню -->
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-outline-primary dropdown-toggle"
+                                        type="button"
+                                        data-bs-toggle="dropdown"
+                                        aria-expanded="false">
+                                    <i class="bi bi-sort-down"></i>
+                                    {% if sort == 'name' %}Название
+                                    {% elif sort == 'id' %}ID
+                                    {% elif sort == 'purpose' %}Назначение
+                                    {% elif sort == 'ripening_period' %}Срок созревания
+                                    {% elif sort == 'frost_resistance' %}Морозостойкость
+                                    {% elif sort == 'berry_color' %}Цвет ягод
+                                    {% elif sort == 'taste' %}Вкус
+                                    {% elif sort == 'sugar_content' %}Сахар
+                                    {% elif sort == 'acidity' %}Кислотность
+                                    {% elif sort == 'created_at' %}Дата добавления
+                                    {% else %}{{ sort }}
+                                    {% endif %}
+                                    {% if order == 'asc' %} ↑{% else %} ↓{% endif %}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><h6 class="dropdown-header">Сортировать по:</h6></li>
+                                    <li><a class="dropdown-item {% if sort == 'id' %}active{% endif %}"
+                                        href="?sort=id&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-hash"></i> ID
+                                        {% if sort == 'id' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'name' %}active{% endif %}"
+                                        href="?sort=name&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-fonts"></i> Название
+                                        {% if sort == 'name' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'purpose' %}active{% endif %}"
+                                        href="?sort=purpose&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-wine-glass"></i> Назначение
+                                        {% if sort == 'purpose' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'ripening_period' %}active{% endif %}"
+                                        href="?sort=ripening_period&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-calendar"></i> Срок созревания
+                                        {% if sort == 'ripening_period' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'frost_resistance' %}active{% endif %}"
+                                        href="?sort=frost_resistance&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-snow"></i> Морозостойкость
+                                        {% if sort == 'frost_resistance' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'berry_color' %}active{% endif %}"
+                                        href="?sort=berry_color&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-palette"></i> Цвет ягод
+                                        {% if sort == 'berry_color' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'taste' %}active{% endif %}"
+                                        href="?sort=taste&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-emoji-smile"></i> Вкус
+                                        {% if sort == 'taste' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'sugar_content' %}active{% endif %}"
+                                        href="?sort=sugar_content&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-droplet"></i> Сахар
+                                        {% if sort == 'sugar_content' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'acidity' %}active{% endif %}"
+                                        href="?sort=acidity&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-thermometer"></i> Кислотность
+                                        {% if sort == 'acidity' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><a class="dropdown-item {% if sort == 'created_at' %}active{% endif %}"
+                                        href="?sort=created_at&order=asc&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-clock"></i> Дата добавления
+                                        {% if sort == 'created_at' %}<i class="bi bi-check2 ms-2"></i>{% endif %}
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item"
+                                        href="?sort={{ sort }}&order={% if order == 'asc' %}desc{% else %}asc{% endif %}&search={{ search|urlencode }}&page={{ page }}">
+                                        <i class="bi bi-arrow-{% if order == 'asc' %}up{% else %}down{% endif %}"></i>
+                                        {% if order == 'asc' %}По убыванию{% else %}По возрастанию{% endif %}
+                                    </a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                        <div class="text-muted small">
+                            <i class="bi bi-funnel"></i>
+                            Для сортировки кликните на заголовок столбца
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Footer -->
+    <footer class="mt-5 py-4 text-center text-muted border-top">
+        <div class="container">
+            <small>
+                🍇 База данных винограда |
+                <a href="{{ url_for('user_home') }}" class="text-decoration-none">Пользовательский вид</a> |
+                Версия: {{ now().strftime('%Y.%m.%d') }}
+            </small>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Автоматическое скрытие алертов через 5 секунд
+        setTimeout(function() {
+            var alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function(alert) {
+                var bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
+        // Подтверждение удаления
+        document.querySelectorAll('form[onsubmit]').forEach(function(form) {
+            form.onsubmit = function() {
+                return confirm('Вы уверены, что хотите удалить этот сорт?');
+            };
+        });
+    </script>
+
+</body>
+</html>

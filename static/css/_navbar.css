@@ -1,0 +1,68 @@
+/* 🍇 НАВИГАЦИОННАЯ ПАНЕЛЬ */
+.navbar-grape {
+    background: var(--gradient-primary) !important;
+    box-shadow: var(--shadow-purple);
+    padding: 0.8rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+}
+
+.navbar-grape .navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    color: white !important;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-grape .navbar-brand i {
+    animation: grapeSpin 10s linear infinite;
+}
+
+@keyframes grapeSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.navbar-grape .nav-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: var(--radius-md);
+    margin: 0 2px;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.navbar-grape .nav-link::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: white;
+    transition: all var(--transition-base);
+    transform: translateX(-50%);
+}
+
+.navbar-grape .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white !important;
+}
+
+.navbar-grape .nav-link:hover::before {
+    width: 80%;
+}
+
+.navbar-grape .nav-link.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white !important;
+}
+
+.navbar-grape .nav-link.active::before {
+    width: 80%;
+}

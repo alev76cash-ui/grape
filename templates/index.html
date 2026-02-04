@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}🍇 Виноградная база данных{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <div class="container">
+        <h1 class="display-4 text-dark mb-4">🍇 Виноградная база данных</h1>
+        <p class="lead text-dark mb-4">Система учета сортов винограда с расширенными возможностями</p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <h3 class="text-dark mb-4">Добро пожаловать!</h3>
+                        <p class="text-dark mb-4">
+                            Это система для учета и каталогизации сортов винограда.
+                            Вы можете просматривать сорта, искать по различным параметрам
+                            и получать подробную информацию о каждом сорте.
+                        </p>
+                        <div class="d-grid gap-3">
+                            <a href="{{ url_for('user_home') }}" class="btn btn-primary btn-lg">
+                                <i class="fas fa-search me-2"></i>Перейти к поиску сортов
+                            </a>
+                            {% if not is_admin() %}
+                            <a href="{{ url_for('admin_login') }}" class="btn btn-outline-success btn-lg">
+                                <i class="fas fa-sign-in-alt me-2"></i>Вход для администратора
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('admin_home') }}" class="btn btn-warning btn-lg">
+                                <i class="fas fa-tools me-2"></i>Административная панель
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

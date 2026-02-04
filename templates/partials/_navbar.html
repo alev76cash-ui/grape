@@ -1,0 +1,66 @@
+<nav class="navbar navbar-expand-lg navbar-dark navbar-grape">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url_for('user_home') }}">
+            <i class="fas fa-grapes"></i>
+            <span class="d-none d-sm-inline">Виноградная База</span>
+        </a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if request.endpoint == 'user_home' }}"
+                       href="{{ url_for('user_home') }}">
+                        <i class="fas fa-home me-1"></i> Главная
+                    </a>
+                </li>
+
+                {% if is_admin() %}
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if request.endpoint == 'admin_home' }}"
+                       href="{{ url_for('admin_home') }}">
+                        <i class="fas fa-tools me-1"></i> Админ
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ 'active' if request.endpoint == 'add_variety' }}"
+                       href="{{ url_for('add_variety') }}">
+                        <i class="fas fa-plus me-1"></i> Добавить
+                    </a>
+                </li>
+                {% endif %}
+
+                {% if is_admin() %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-download me-1"></i> Экспорт
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{{ url_for('export_csv') }}">CSV</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('export_excel') }}">Excel</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('export_pdf') }}">PDF</a></li>
+                        <li><a class="dropdown-item" href="{{ url_for('export_all') }}">Все форматы</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+
+                {% if is_admin() %}
+                <li class="nav-item">
+                    <a class="nav-link text-warning" href="{{ url_for('admin_logout') }}">
+                        <i class="fas fa-sign-out-alt me-1"></i> Выйти
+                    </a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link text-success" href="{{ url_for('admin_login') }}">
+                        <i class="fas fa-sign-in-alt me-1"></i> Вход
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

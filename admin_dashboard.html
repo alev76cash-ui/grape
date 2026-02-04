@@ -1,0 +1,238 @@
+{% extends "base.html" %}
+
+{% block title %}📊 Статистика базы данных{% endblock %}
+
+{% block content %}
+<div class="admin-header fade-in">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="display-5 fw-bold mb-3 text-white">
+                <i class="fas fa-chart-bar me-3"></i>
+                Статистика базы данных
+            </h1>
+            <p class="lead mb-0 text-white">Аналитика и метрики по сортам винограда</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="stats-badge d-inline-block text-white">
+                <i class="fas fa-calendar me-2"></i>
+                <strong>{{ now().strftime('%d.%m.%Y') }}</strong>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 mb-4">
+    <!-- Карточка 1: Общее количество -->
+    <div class="col fade-in stagger-delay-1">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-grapes fa-3x text-primary"></i>
+                </div>
+                <h3 class="stat-number display-4 fw-bold">{{ total_count() }}</h3>
+                <p class="stat-label text-muted mb-0">Всего сортов</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка 2: По назначению -->
+    <div class="col fade-in stagger-delay-2">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-wine-glass-alt fa-3x text-success"></i>
+                </div>
+                <h3 class="stat-number display-4 fw-bold">{{ purposes|length }}</h3>
+                <p class="stat-label text-muted mb-0">Категорий назначения</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка 3: По цвету -->
+    <div class="col fade-in stagger-delay-3">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-palette fa-3x text-warning"></i>
+                </div>
+                <h3 class="stat-number display-4 fw-bold">{{ colors|length }}</h3>
+                <p class="stat-label text-muted mb-0">Разных цветов ягод</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Карточка 4: Средняя морозостойкость -->
+    <div class="col fade-in stagger-delay-4">
+        <div class="card stat-card h-100 border-0 shadow-sm">
+            <div class="card-body text-center">
+                <div class="stat-icon mb-3">
+                    <i class="fas fa-snowflake fa-3x text-info"></i>
+                </div>
+                <h3 class="stat-number display-4 fw-bold">-24°C</h3>
+                <p class="stat-label text-muted mb-0">Средняя морозостойкость</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Диаграммы и графики -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Распределение по назначению</h5>
+            </div>
+            <div class="card-body">
+                <div id="purposeChart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm border-0 h-100">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Распределение по цвету ягод</h5>
+            </div>
+            <div class="card-body">
+                <div id="colorChart" style="height: 300px;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Последние добавленные сорты -->
+<div class="card shadow-sm border-0 mt-4">
+    <div class="card-header bg-warning text-dark">
+        <h5 class="mb-0"><i class="fas fa-history me-2"></i>Последние добавленные сорты</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Название</th>
+                        <th>Назначение</th>
+                        <th>Цвет</th>
+                        <th>Морозостойкость</th>
+                        <th>Дата добавления</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for variety in recent_varieties %}
+                    <tr>
+                        <td>{{ variety.id }}</td>
+                        <td><a href="{{ url_for('view_variety', id=variety.id) }}">{{ variety.name }}</a></td>
+                        <td><span class="badge bg-primary">{{ variety.purpose }}</span></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="color-indicator me-2" style="background-color: {{ get_color_code(variety.berry_color) }}"></div>
+                                {{ variety.berry_color }}
+                            </div>
+                        </td>
+                        <td>{{ variety.frost_resistance or '-' }}</td>
+                        <td>{{ variety.created_at[:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js для графиков -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // График распределения по назначению
+    const purposeCtx = document.getElementById('purposeChart').getContext('2d');
+    const purposeChart = new Chart(purposeCtx, {
+        type: 'pie',
+        data: {
+            labels: ['Столовые', 'Винные', 'Универсальные', 'Технические'],
+            datasets: [{
+                data: [65, 20, 10, 5],
+                backgroundColor: [
+                    '#6a0dad',  // Столовые - фиолетовый
+                    '#2e8b57',  // Винные - зеленый
+                    '#ff6b6b',  // Универсальные - красный
+                    '#ffd700'   // Технические - золотой
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+
+    // График распределения по цвету
+    const colorCtx = document.getElementById('colorChart').getContext('2d');
+    const colorChart = new Chart(colorCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Белый', 'Красный', 'Синий', 'Розовый', 'Фиолетовый'],
+            datasets: [{
+                label: 'Количество сортов',
+                data: [30, 25, 20, 15, 10],
+                backgroundColor: [
+                    '#FFFFFF',
+                    '#F44336',
+                    '#2196F3',
+                    '#E91E63',
+                    '#9C27B0'
+                ],
+                borderColor: [
+                    '#DDDDDD',
+                    '#D32F2F',
+                    '#1976D2',
+                    '#C2185B',
+                    '#7B1FA2'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 5
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+
+<style>
+.stat-card {
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    opacity: 0.8;
+}
+
+.stat-number {
+    color: var(--grape-purple);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+}
+</style>
+{% endblock %}

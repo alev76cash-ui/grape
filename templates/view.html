@@ -1,0 +1,263 @@
+{% extends "base.html" %}
+
+{% block title %}{{ variety.name }} - Подробная информация{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8">
+        <!-- Карточка сорта -->
+        <div class="card shadow-lg border-0 mb-4">
+            <div class="card-header py-3" style="background: linear-gradient(135deg, var(--grape-primary), var(--grape-secondary));">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h4 mb-0 text-white">
+                            <i class="fas fa-grapes me-2"></i>
+                            {{ variety.name }}
+                        </h1>
+                        <div class="mt-2">
+                            <span class="badge bg-light text-dark me-2">
+                                ID: {{ variety.id }}
+                            </span>
+                            <span class="badge bg-{{ 'success' if variety.purpose == 'Столовый' else 'info' if variety.purpose == 'Винный' else 'warning' }} me-2">
+                                {{ variety.purpose }}
+                            </span>
+                            {% if variety.berry_color %}
+                            <span class="badge text-white" style="background-color: {{ get_color_code(variety.berry_color) }}">
+                                {{ variety.berry_color }}
+                            </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if is_admin() %}
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('edit_variety', id=variety.id) }}">
+                                    <i class="fas fa-edit me-2"></i>Редактировать
+                                </a>
+                            </li>
+                            <li>
+                                <form method="POST" action="{{ url_for('delete_variety', id=variety.id) }}"
+                                      onsubmit="return confirm('Удалить сорт «{{ variety.name }}»?')">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="fas fa-trash me-2"></i>Удалить
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="row">
+                    <!-- Изображение сорта -->
+                    <div class="col-md-4 mb-3 mb-md-0">
+                        <div class="text-center">
+                            {% if variety.image_url %}
+                            <img src="{{ variety.image_url }}"
+                                 alt="{{ variety.name }}"
+                                 class="img-fluid rounded shadow"
+                                 style="max-height: 250px; object-fit: cover;"
+                                 onerror="this.onerror=null; this.src='{{ get_default_image_url() }}';">
+                            {% else %}
+                            <img src="{{ get_default_image_url() }}"
+                                 alt="{{ variety.name }}"
+                                 class="img-fluid rounded shadow"
+                                 style="max-height: 250px; object-fit: cover;">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Основная информация -->
+                    <div class="col-md-8">
+                        <h4 class="mb-3 text-primary">
+                            <i class="fas fa-info-circle me-2"></i>Основные характеристики
+                        </h4>
+
+                        <div class="list-group list-group-flush">
+                            {% if variety.ripening_period %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-calendar-alt text-success me-2"></i>
+                                    <strong>Срок созревания:</strong>
+                                </div>
+                                <span class="badge bg-success">{{ variety.ripening_period }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if variety.frost_resistance %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-snowflake text-info me-2"></i>
+                                    <strong>Морозостойкость:</strong>
+                                </div>
+                                <span class="badge bg-info">{{ variety.frost_resistance }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if variety.sugar_content %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-candy-cane text-danger me-2"></i>
+                                    <strong>Содержание сахара:</strong>
+                                </div>
+                                <span class="badge bg-danger">{{ variety.sugar_content }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if variety.acidity %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-lemon text-warning me-2"></i>
+                                    <strong>Кислотность:</strong>
+                                </div>
+                                <span class="badge bg-warning text-dark">{{ variety.acidity }}</span>
+                            </div>
+                            {% endif %}
+
+                            {% if variety.berry_color %}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <i class="fas fa-palette text-primary me-2"></i>
+                                    <strong>Цвет ягод:</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <div class="color-indicator me-2"
+                                         style="background-color: {{ get_color_code(variety.berry_color) }}; width: 20px; height: 20px;"></div>
+                                    <span class="badge" style="background-color: {{ get_color_code(variety.berry_color) }}; color: white">
+                                        {{ variety.berry_color }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Вкусовые характеристики -->
+                        <div class="mt-4">
+                            <h5 class="text-primary">
+                                <i class="fas fa-utensils me-2"></i>Вкусовые качества
+                            </h5>
+
+                            {% if variety.taste %}
+                            <div class="card bg-light border-0 mt-2">
+                                <div class="card-body">
+                                    <p class="card-text">{{ variety.taste }}</p>
+                                </div>
+                            </div>
+                            {% else %}
+                            <div class="alert alert-info mt-2">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Описание вкуса отсутствует
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Боковая панель -->
+    <div class="col-lg-4">
+        <!-- Действия -->
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-tools me-2"></i>Действия
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('user_home') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-list me-2"></i>К списку сортов
+                    </a>
+                    {% if is_admin() %}
+                    <a href="{{ url_for('edit_variety', id=variety.id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit me-2"></i>Редактировать
+                    </a>
+                    <button type="button" class="btn btn-outline-info btn-sm" onclick="copyToClipboard('{{ variety.name }}')">
+                        <i class="fas fa-copy me-2"></i>Копировать название
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Быстрые ссылки -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">
+                    <i class="fas fa-link me-2"></i>Быстрые ссылки
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('user_home') }}" class="list-group-item list-group-item-action py-2">
+                        <i class="fas fa-home text-primary me-2"></i>На главную
+                    </a>
+                    {% if is_admin() %}
+                    <a href="{{ url_for('add_variety') }}" class="list-group-item list-group-item-action py-2">
+                        <i class="fas fa-plus-circle text-success me-2"></i>Добавить новый сорт
+                    </a>
+                    <a href="{{ url_for('stats') }}" class="list-group-item list-group-item-action py-2">
+                        <i class="fas fa-chart-bar text-info me-2"></i>Статистика базы
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.color-indicator {
+    transition: transform 0.3s;
+}
+.color-indicator:hover {
+    transform: scale(1.2);
+}
+
+.list-group-item {
+    border-color: rgba(0,0,0,.05);
+    padding: 10px 15px;
+}
+
+.img-fluid {
+    border: 3px solid #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Гарантия белого текста в заголовке */
+.card-header h1,
+.card-header .text-white {
+    color: white !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Улучшение видимости бейджей */
+.badge {
+    font-weight: 600;
+    padding: 0.5em 0.8em;
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        alert('Название скопировано в буфер обмена: ' + text);
+    }, function(err) {
+        console.error('Ошибка копирования: ', err);
+        alert('Не удалось скопировать название');
+    });
+}
+</script>
+{% endblock %}

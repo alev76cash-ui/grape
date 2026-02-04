@@ -1,0 +1,493 @@
+{% extends "base.html" %}
+
+{% block title %}🍇 Каталог сортов винограда{% endblock %}
+
+{% block extra_css %}
+<style>
+    .stat-badge {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: var(--radius-md);
+        padding: 0.5rem 0.75rem;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        min-width: 70px;
+    }
+
+    .stat-badge .number {
+        display: block;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: white;
+        line-height: 1;
+    }
+
+    .stat-badge .label {
+        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.9);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .quick-filter {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 2rem;
+    }
+
+    .active-filters {
+        background: #f0f7ff;
+        border-radius: var(--radius-lg);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        border-left: 4px solid var(--grape-primary);
+    }
+
+    [data-bs-theme="dark"] .active-filters {
+        background: rgba(106, 13, 173, 0.1);
+    }
+
+    .filter-badge {
+        background: var(--gradient-primary);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-full);
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+    }
+
+    .taste-line {
+        font-size: 0.85rem;
+        line-height: 1.3;
+        color: var(--grape-dark);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 100%;
+    }
+
+    [data-bs-theme="dark"] .taste-line {
+        color: var(--grape-text-dark);
+    }
+
+    .filter-chip {
+        background: var(--grape-light);
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius-full);
+        text-decoration: none;
+        color: var(--grape-dark);
+        border: 1px solid rgba(0,0,0,0.1);
+        transition: all var(--transition-base);
+    }
+
+    .filter-chip:hover,
+    .filter-chip.active {
+        background: var(--grape-primary);
+        color: white;
+        transform: translateY(-2px);
+        border-color: var(--grape-primary);
+    }
+
+    .filter-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    /* Улучшение адаптивности */
+    @media (max-width: 768px) {
+        .varieties-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 1rem;
+        }
+
+        .variety-card-body {
+            padding: 0.75rem;
+        }
+
+        .stat-badge .number {
+            font-size: 1rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .varieties-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        .quick-filter {
+            font-size: 0.9rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Быстрые фильтры -->
+<div class="quick-filter fade-in stagger-delay-2">
+    <span class="fw-semibold me-2">
+        <i class="fas fa-bolt text-primary"></i> Быстрый доступ:
+    </span>
+    <div class="d-flex flex-wrap gap-2">
+        <a href="{{ url_for('user_home') }}?purpose=Столовый" class="filter-chip {% if 'Столовый' in purpose_filter %}active{% endif %}">
+            <i class="fas fa-utensils me-1"></i>Столовые
+        </a>
+        <a href="{{ url_for('user_home') }}?purpose=Винный" class="filter-chip {% if 'Винный' in purpose_filter %}active{% endif %}">
+            <i class="fas fa-wine-glass me-1"></i>Винные
+        </a>
+        <a href="{{ url_for('user_home') }}?color=Белый" class="filter-chip {% if 'Белый' in color_filter %}active{% endif %}">
+            <i class="fas fa-circle me-1" style="color: #FFFFFF"></i>Белые
+        </a>
+        <a href="{{ url_for('user_home') }}?color=Красный" class="filter-chip {% if 'Красный' in color_filter %}active{% endif %}">
+            <i class="fas fa-circle me-1" style="color: #F44336"></i>Красные
+        </a>
+        <a href="{{ url_for('user_home') }}?color=Тёмно-синий" class="filter-chip {% if 'Тёмно-синий' in color_filter %}active{% endif %}">
+            <i class="fas fa-circle me-1" style="color: #303F9F"></i>Синие
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Сайдбар фильтров -->
+    <div class="col-lg-3">
+        <div class="filter-sidebar fade-in stagger-delay-2 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <form method="GET" action="{{ url_for('user_home') }}" id="filterForm">
+                        <input type="hidden" name="search" value="{{ search }}">
+
+                        <div class="mb-4">
+                            <h5 class="fw-semibold mb-3">
+                                <i class="fas fa-wine-glass-alt text-primary me-2"></i>Назначение
+                            </h5>
+                            <div class="filter-options">
+                                {% for purpose in purposes %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="purpose_{{ purpose.purpose|replace(' ', '_') }}"
+                                           name="purpose" value="{{ purpose.purpose }}"
+                                           {% if purpose.purpose in purpose_filter %}checked{% endif %}>
+                                    <label class="form-check-label" for="purpose_{{ purpose.purpose|replace(' ', '_') }}">
+                                        {{ purpose.purpose }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <h5 class="fw-semibold mb-3">
+                                <i class="fas fa-palette text-primary me-2"></i>Цвет ягод
+                            </h5>
+                            <div class="filter-options">
+                                {% for color in colors %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox"
+                                           id="color_{{ color.berry_color|replace(' ', '_') }}"
+                                           name="color" value="{{ color.berry_color }}"
+                                           {% if color.berry_color in color_filter %}checked{% endif %}>
+                                    <label class="form-check-label d-flex align-items-center"
+                                           for="color_{{ color.berry_color|replace(' ', '_') }}">
+                                        <div class="color-indicator me-2"
+                                             style="background-color: {{ get_color_code(color.berry_color) }}"></div>
+                                        {{ color.berry_color }}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-grape-primary">
+                                <i class="fas fa-filter me-2"></i>Применить фильтры
+                            </button>
+                            <a href="{{ url_for('user_home') }}{% if search %}?search={{ search }}{% endif %}"
+                               class="btn btn-grape-outline">
+                                <i class="fas fa-times me-2"></i>Сбросить все
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="col-lg-9">
+        <!-- Активные фильтры -->
+        {% if search or purpose_filter or color_filter %}
+        <div class="active-filters mb-4 fade-in stagger-delay-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h6 class="mb-0">
+                    <i class="fas fa-filter text-primary me-2"></i>Фильтры:
+                </h6>
+                <small class="text-muted">
+                    <strong>{{ total }}</strong> сорт(ов)
+                </small>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                {% if search %}
+                <span class="filter-badge">
+                    <i class="fas fa-search me-1"></i>{{ search }}
+                    <a href="{{ url_for('user_home', purpose=purpose_filter, color=color_filter) }}"
+                       class="text-white ms-2" style="text-decoration: none;">&times;</a>
+                </span>
+                {% endif %}
+
+                {% for purpose in purpose_filter %}
+                <span class="filter-badge">
+                    <i class="fas fa-wine-glass-alt me-1"></i>{{ purpose }}
+                    {% set new_purposes = purpose_filter[:] %}
+                    {% set _ = new_purposes.remove(purpose) %}
+                    <a href="{{ url_for('user_home', search=search, color=color_filter, purpose=new_purposes) }}"
+                       class="text-white ms-2" style="text-decoration: none;">&times;</a>
+                </span>
+                {% endfor %}
+
+                {% for color in color_filter %}
+                <span class="filter-badge">
+                    <i class="fas fa-circle me-1" style="font-size: 0.6rem; color: {{ get_color_code(color) }}"></i>{{ color }}
+                    {% set new_colors = color_filter[:] %}
+                    {% set _ = new_colors.remove(color) %}
+                    <a href="{{ url_for('user_home', search=search, purpose=purpose_filter, color=new_colors) }}"
+                       class="text-white ms-2" style="text-decoration: none;">&times;</a>
+                </span>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if varieties %}
+        <!-- Карточки сортов -->
+        <div class="varieties-grid" id="varietiesContainer">
+            {% for variety in varieties %}
+            <div class="variety-card fade-in stagger-delay-{{ loop.index % 4 + 1 }}">
+                <!-- Бейдж назначения -->
+                <div class="purpose-badge position-absolute top-3 end-3 z-2">
+                    {{ variety.purpose or 'Не указано' }}
+                </div>
+
+                <!-- Изображение -->
+                <div class="variety-card-image">
+                    {% if variety.image_url %}
+                    <img src="{{ variety.image_url }}"
+                         alt="{{ variety.name }}"
+                         class="variety-card-img"
+                         onerror="this.onerror=null; this.src='{{ get_default_image_url() }}';">
+                    {% else %}
+                    <div class="variety-card-img d-flex align-items-center justify-content-center bg-light">
+                        <i class="fas fa-grapes fa-3x text-muted"></i>
+                    </div>
+                    {% endif %}
+                    <div class="variety-card-overlay">
+                        <div class="purpose-badge">
+                            {{ get_ripening_category(variety.ripening_period) }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Контент карточки -->
+                <div class="variety-card-body">
+                    <h5 class="variety-card-title mb-2">
+                        {{ variety.name }}
+                    </h5>
+
+                    <!-- Цвет и характеристики -->
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="color-indicator me-2"
+                             style="background-color: {{ get_color_code(variety.berry_color) }}"
+                             title="{{ variety.berry_color }}"></div>
+                        <span class="fw-medium">{{ variety.berry_color or 'Цвет не указан' }}</span>
+                    </div>
+
+                    <!-- Морозостойкость -->
+                    {% if variety.frost_resistance %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span><i class="fas fa-snowflake text-info me-1"></i>Морозостойкость</span>
+                            <span class="fw-medium">{{ variety.frost_resistance }}</span>
+                        </div>
+                        <div class="characteristic-bar">
+                            {% set frost_value = parse_frost_resistance(variety.frost_resistance) %}
+                            {% set width_percent = (frost_value / 40) * 100 %}
+                            {% if width_percent > 100 %}{% set width_percent = 100 %}{% endif %}
+                            {% if width_percent < 0 %}{% set width_percent = 0 %}{% endif %}
+                            <div class="characteristic-fill frost-fill" style="width: {{ width_percent|int }}%"></div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Вкусовые характеристики -->
+                    {% if variety.taste %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">
+                            <i class="fas fa-utensils me-1"></i>Вкус:
+                        </small>
+                        <div class="taste-line" title="{{ variety.taste }}">
+                            {{ variety.taste|truncate(60) }}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Сахар и кислотность -->
+                    {% if variety.sugar_content or variety.acidity %}
+                    <div class="row g-2 small">
+                        {% if variety.sugar_content %}
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-candy-cane text-warning me-1"></i>
+                                <span class="text-truncate">{{ variety.sugar_content }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if variety.acidity %}
+                        <div class="col-6">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-tint text-success me-1"></i>
+                                <span class="text-truncate">{{ variety.acidity }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Кнопки действий -->
+                <div class="variety-card-actions">
+                    <a href="{{ url_for('view_variety', id=variety.id) }}"
+                       class="btn btn-grape-primary flex-grow-1">
+                        <i class="fas fa-eye me-1"></i>Подробнее
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Пагинация -->
+        {% if total_pages > 1 %}
+        <nav aria-label="Навигация по страницам" class="mt-5 fade-in">
+            <ul class="pagination justify-content-center">
+                <li class="page-item {% if page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('user_home', page=page-1, search=search, purpose=purpose_filter, color=color_filter) }}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+
+                {% for p in range(1, total_pages + 1) %}
+                    {% if p >= page-2 and p <= page+2 %}
+                        {% if p == page %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ p }}</span>
+                        </li>
+                        {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('user_home', page=p, search=search, purpose=purpose_filter, color=color_filter) }}">
+                                {{ p }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+
+                <li class="page-item {% if page == total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('user_home', page=page+1, search=search, purpose=purpose_filter, color=color_filter) }}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="text-center mt-2 text-muted small">
+                Страница {{ page }} из {{ total_pages }}
+            </div>
+        </nav>
+        {% endif %}
+
+        {% else %}
+        <!-- Если сортов не найдено -->
+        <div class="empty-state fade-in">
+            <i class="fas fa-grapes fa-3x text-muted mb-3"></i>
+            <h3 class="mb-3">Сортов не найдено</h3>
+            <p class="text-muted mb-4">
+                {% if search or purpose_filter or color_filter %}
+                Попробуйте изменить параметры поиска или фильтрации
+                {% else %}
+                База данных винограда пуста.
+                {% if is_admin() %}
+                Добавьте первый сорт!
+                {% endif %}
+                {% endif %}
+            </p>
+            <div class="d-flex gap-2 justify-content-center">
+                {% if search or purpose_filter or color_filter %}
+                <a href="{{ url_for('user_home') }}" class="btn btn-grape-outline">
+                    <i class="fas fa-times me-2"></i>Сбросить фильтры
+                </a>
+                {% endif %}
+                {% if is_admin() and not search and not purpose_filter and not color_filter %}
+                <a href="{{ url_for('add_variety') }}" class="btn btn-grape-primary">
+                    <i class="fas fa-plus me-2"></i>Добавить первый сорт
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Анимация прогресс-баров
+    document.querySelectorAll('.characteristic-fill').forEach(bar => {
+        const width = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => {
+            bar.style.width = width;
+        }, 100);
+    });
+
+    // Анимация при применении фильтров
+    const filterForm = document.getElementById('filterForm');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function(e) {
+            const varietiesContainer = document.getElementById('varietiesContainer');
+            if (varietiesContainer) {
+                varietiesContainer.style.opacity = '0.5';
+                varietiesContainer.style.transition = 'opacity 0.3s';
+                setTimeout(() => {
+                    varietiesContainer.style.opacity = '1';
+                }, 300);
+            }
+        });
+    }
+
+    // Показать полный текст вкуса при наведении (для мобильных)
+    const tasteLines = document.querySelectorAll('.taste-line');
+    tasteLines.forEach(line => {
+        line.addEventListener('click', function() {
+            if (window.innerWidth < 768) { // Только на мобильных
+                const fullText = this.getAttribute('title');
+                if (fullText && fullText.length > 60) {
+                    if (this.classList.contains('expanded')) {
+                        this.classList.remove('expanded');
+                        this.textContent = fullText.substring(0, 60) + '...';
+                    } else {
+                        this.classList.add('expanded');
+                        this.textContent = fullText;
+                    }
+                }
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

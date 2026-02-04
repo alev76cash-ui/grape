@@ -1,0 +1,53 @@
+:root {
+    /* Основные цвета виноградной темы */
+    --grape-primary: #6a0dad;
+    --grape-secondary: #2e8b57;
+    --grape-accent: #ff6b6b;
+    --grape-light: #f8f9fa;
+    --grape-dark: #212529;
+    --grape-text-dark: #e6e6e6;
+
+    /* Оттенки */
+    --grape-purple: #6a0dad;
+    --grape-purple-light: #8a2be2;
+    --grape-purple-dark: #4b0082;
+    --grape-green: #2e8b57;
+    --grape-green-light: #3cb371;
+    --grape-red: #dc143c;
+    --grape-red-light: #ff6b6b;
+    --grape-gold: #daa520;
+    --grape-gold-light: #ffd700;
+    --grape-leaf: #228b22;
+    --grape-leaf-light: #32cd32;
+
+    /* Темная тема */
+    --grape-dark-bg: #1a1a2e;
+    --grape-card-dark: #16213e;
+
+    /* Градиенты */
+    --gradient-primary: linear-gradient(135deg, var(--grape-primary), var(--grape-secondary));
+    --gradient-secondary: linear-gradient(135deg, var(--grape-red), var(--grape-gold));
+    --gradient-light: linear-gradient(135deg, #ffffff, var(--grape-light));
+    --gradient-dark: linear-gradient(135deg, var(--grape-dark-bg), #0f3460);
+    --gradient-admin: linear-gradient(135deg, var(--grape-purple-light), var(--grape-green-light));
+
+    /* Тени */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.1);
+    --shadow-xl: 0 20px 25px rgba(0,0,0,0.15);
+    --shadow-purple: 0 4px 20px rgba(106, 13, 173, 0.2);
+
+    /* Радиусы */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    /* Анимации */
+    --transition-fast: 0.15s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.5s ease;
+    --transition-bounce: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}

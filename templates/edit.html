@@ -1,0 +1,265 @@
+{% extends "base.html" %}
+
+{% block title %}✏️ Редактировать {{ variety.name }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-warning text-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0">
+                        <i class="fas fa-edit me-2"></i>
+                        Редактировать сорт: {{ variety.name }}
+                    </h2>
+                    <a href="{{ url_for('view_variety', id=variety.id) }}" class="btn btn-light btn-sm">
+                        <i class="fas fa-eye me-1"></i>Просмотр
+                    </a>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <div class="row">
+                        <!-- Левая колонка -->
+                        <div class="col-md-6">
+                            <!-- Название -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">
+                                    <i class="fas fa-tag text-primary me-1"></i>
+                                    Название сорта *
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="name"
+                                       name="name"
+                                       value="{{ variety.name }}"
+                                       required
+                                       placeholder="Например: Лора">
+                                <div class="invalid-feedback">
+                                    Пожалуйста, введите название сорта.
+                                </div>
+                            </div>
+
+                            <!-- Назначение -->
+                            <div class="mb-3">
+                                <label for="purpose" class="form-label">
+                                    <i class="fas fa-wine-glass-alt text-info me-1"></i>
+                                    Назначение
+                                </label>
+                                <select class="form-select" id="purpose" name="purpose">
+                                    <option value="Столовый" {% if variety.purpose == 'Столовый' %}selected{% endif %}>Столовый</option>
+                                    <option value="Винный" {% if variety.purpose == 'Винный' %}selected{% endif %}>Винный</option>
+                                    <option value="Универсальный" {% if variety.purpose == 'Универсальный' %}selected{% endif %}>Универсальный</option>
+                                </select>
+                            </div>
+
+                            <!-- Срок созревания -->
+                            <div class="mb-3">
+                                <label for="ripening_period" class="form-label">
+                                    <i class="fas fa-calendar-alt text-warning me-1"></i>
+                                    Срок созревания
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="ripening_period"
+                                       name="ripening_period"
+                                       value="{{ variety.ripening_period or '' }}"
+                                       placeholder="Например: Очень ранний/95-105 дней">
+                            </div>
+
+                            <!-- Морозостойкость -->
+                            <div class="mb-3">
+                                <label for="frost_resistance" class="form-label">
+                                    <i class="fas fa-snowflake text-info me-1"></i>
+                                    Морозостойкость
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="frost_resistance"
+                                       name="frost_resistance"
+                                       value="{{ variety.frost_resistance or '' }}"
+                                       placeholder="Например: -22°C">
+                            </div>
+
+                            <!-- Цвет ягод -->
+                            <div class="mb-3">
+                                <label for="berry_color" class="form-label">
+                                    <i class="fas fa-palette text-danger me-1"></i>
+                                    Цвет ягод
+                                </label>
+                                <select class="form-select" id="berry_color" name="berry_color">
+                                    <option value="">Выберите цвет...</option>
+                                    <option value="Белый" {% if variety.berry_color == 'Белый' %}selected{% endif %}>Белый</option>
+                                    <option value="Зеленый" {% if variety.berry_color == 'Зеленый' %}selected{% endif %}>Зеленый</option>
+                                    <option value="Розовый" {% if variety.berry_color == 'Розовый' %}selected{% endif %}>Розовый</option>
+                                    <option value="Красный" {% if variety.berry_color == 'Красный' %}selected{% endif %}>Красный</option>
+                                    <option value="Синий" {% if variety.berry_color == 'Синий' %}selected{% endif %}>Синий</option>
+                                    <option value="Тёмно-синий" {% if variety.berry_color == 'Тёмно-синий' %}selected{% endif %}>Тёмно-синий</option>
+                                    <option value="Фиолетовый" {% if variety.berry_color == 'Фиолетовый' %}selected{% endif %}>Фиолетовый</option>
+                                    <option value="Чёрный" {% if variety.berry_color == 'Чёрный' %}selected{% endif %}>Чёрный</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Правая колонка -->
+                        <div class="col-md-6">
+                            <!-- Сахар -->
+                            <div class="mb-3">
+                                <label for="sugar_content" class="form-label">
+                                    <i class="fas fa-candy-cane text-warning me-1"></i>
+                                    Содержание сахара
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="sugar_content"
+                                       name="sugar_content"
+                                       value="{{ variety.sugar_content or '' }}"
+                                       placeholder="Например: 18-22%">
+                            </div>
+
+                            <!-- Кислотность -->
+                            <div class="mb-3">
+                                <label for="acidity" class="form-label">
+                                    <i class="fas fa-lemon text-success me-1"></i>
+                                    Кислотность
+                                </label>
+                                <input type="text"
+                                       class="form-control"
+                                       id="acidity"
+                                       name="acidity"
+                                       value="{{ variety.acidity or '' }}"
+                                       placeholder="Например: 6-7 г/л">
+                            </div>
+
+                            <!-- Вкус -->
+                            <div class="mb-3">
+                                <label for="taste" class="form-label">
+                                    <i class="fas fa-utensils text-primary me-1"></i>
+                                    Вкус
+                                </label>
+                                <textarea class="form-control"
+                                          id="taste"
+                                          name="taste"
+                                          rows="3"
+                                          placeholder="Опишите вкусовые характеристики">{{ variety.taste or '' }}</textarea>
+                            </div>
+
+                            <!-- Изображение -->
+                            <div class="mb-3">
+                                <label for="image" class="form-label">
+                                    <i class="fas fa-image text-success me-1"></i>
+                                    Изображение сорта
+                                </label>
+
+                                <!-- Текущее изображение -->
+                                {% if variety.image_url %}
+                                <div class="mb-2">
+                                    <p class="mb-1 small text-muted">Текущее изображение:</p>
+                                    <img src="{{ variety.image_url }}"
+                                         alt="{{ variety.name }}"
+                                         class="img-thumbnail"
+                                         style="max-height: 100px;"
+                                         onerror="this.onerror=null; this.src='{{ get_default_image_url() }}';">
+                                </div>
+                                {% endif %}
+
+                                <input type="file"
+                                       class="form-control"
+                                       id="image"
+                                       name="image"
+                                       accept=".png,.jpg,.jpeg,.gif,.webp">
+                                <div class="form-text">
+                                    Оставьте поле пустым, чтобы сохранить текущее изображение.
+                                    Поддерживаемые форматы: PNG, JPG, JPEG, GIF, WebP. Максимальный размер: 16MB.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Кнопки действий -->
+                    <div class="d-flex justify-content-between mt-4">
+                        <div>
+                            <a href="{{ url_for('view_variety', id=variety.id) }}" class="btn btn-outline-secondary">
+                                <i class="fas fa-times me-2"></i>Отмена
+                            </a>
+                            <a href="{{ url_for('admin_home') }}" class="btn btn-outline-primary ms-2">
+                                <i class="fas fa-arrow-left me-2"></i>К списку
+                            </a>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-warning px-4">
+                                <i class="fas fa-save me-2"></i>Сохранить изменения
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Информация о сорте -->
+        <div class="card border-0 bg-light mt-4">
+            <div class="card-body">
+                <h5 class="card-title text-dark">
+                    <i class="fas fa-info-circle text-info me-2"></i>
+                    Информация о сорте:
+                </h5>
+                <div class="row small">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>ID:</strong> {{ variety.id }}</p>
+                        <!-- Убрали обращение к variety.created_at -->
+                        <p class="mb-1"><strong>Статус:</strong> <span class="badge bg-success">Активен</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Убрали обращение к variety.updated_at -->
+                        <p class="mb-1"><strong>Изображение:</strong>
+                            {% if variety.image_url %}
+                                <span class="badge bg-info">Есть</span>
+                            {% else %}
+                                <span class="badge bg-secondary">По умолчанию</span>
+                            {% endif %}
+                        </p>
+                        <p class="mb-0"><strong>Тип:</strong> {{ variety.purpose or 'Не указан' }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Валидация формы
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+
+// Предпросмотр изображения
+const imageInput = document.getElementById('image');
+if (imageInput) {
+    imageInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Обновляем существующее изображение или создаем новое
+                const existingImg = document.querySelector('.img-thumbnail');
+                if (existingImg) {
+                    existingImg.src = e.target.result;
+                }
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+}
+</script>
+{% endblock %}

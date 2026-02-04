@@ -1,0 +1,923 @@
+/* 🚀 ГЛАВНЫЙ ФАЙЛ СТИЛЕЙ - ВИНОГРАДНАЯ БАЗА ДАННЫХ */
+
+/* Импорт модульных стилей */
+@import url('_variables.css');    /* Переменные темы */
+@import url('_cards.css');        /* Стили карточек */
+@import url('_navbar.css');       /* Стили навигации */
+
+/* ============ ОБЩИЕ СТИЛИ ============ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Roboto', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gradient-light);
+    min-height: 100vh;
+    transition: all var(--transition-base);
+    color: var(--grape-dark);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+[data-bs-theme="dark"] body {
+    background: var(--gradient-dark);
+    color: var(--grape-text-dark);
+}
+
+/* Отступ для фиксированной навигации */
+body.has-fixed-nav {
+    padding-top: 40px;
+}
+
+/* ============ ТИПОГРАФИЯ ============ */
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+    color: var(--grape-dark);
+}
+
+[data-bs-theme="dark"] h1,
+[data-bs-theme="dark"] h2,
+[data-bs-theme="dark"] h3,
+[data-bs-theme="dark"] h4,
+[data-bs-theme="dark"] h5,
+[data-bs-theme="dark"] h6 {
+    color: var(--grape-text-dark);
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--grape-primary);
+    text-decoration: none;
+    transition: color var(--transition-base);
+}
+
+a:hover {
+    color: var(--grape-purple-dark);
+}
+
+/* ============ КОНТЕЙНЕРЫ И СЕТКА ============ */
+
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+}
+
+/* ПРОСТОЕ РЕШЕНИЕ */
+.container {
+    position: relative;
+    z-index: 1;
+}
+
+.dropdown-menu {
+    z-index: 9999 !important;
+    position: absolute !important;
+}
+
+.table-responsive {
+    overflow: visible !important;
+    position: relative;
+}
+
+.card {
+    overflow: visible !important;
+}
+/* ============ КНОПКИ ============ */
+
+.btn {
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.btn:focus {
+    box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.25);
+}
+
+/* Основная кнопка виноградной темы */
+.btn-grape-primary {
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-grape-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-grape-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    color: white;
+}
+
+.btn-grape-primary:hover::before {
+    left: 100%;
+}
+
+/* Контурная кнопка виноградной темы */
+.btn-grape-outline {
+    background: transparent;
+    border: 2px solid var(--grape-primary);
+    color: var(--grape-primary);
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-base);
+}
+
+.btn-grape-outline:hover {
+    background: var(--grape-primary);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Кнопки Bootstrap переопределение */
+.btn-primary {
+    background: var(--gradient-primary);
+    border-color: var(--grape-primary);
+}
+
+.btn-primary:hover {
+    background: var(--grape-purple-dark);
+    border-color: var(--grape-purple-dark);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--grape-green), var(--grape-green-light));
+    border-color: var(--grape-green);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--grape-gold), var(--grape-gold-light));
+    border-color: var(--grape-gold);
+    color: #212529;
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #17a2b8, #5bc0de);
+    border-color: #17a2b8;
+}
+
+/* ============ ФОРМЫ ============ */
+
+.form-control,
+.form-select {
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+    transition: all var(--transition-base);
+    font-size: 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--grape-primary);
+    box-shadow: 0 0 0 0.25rem rgba(106, 13, 173, 0.25);
+    transform: translateY(-1px);
+}
+
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--grape-dark);
+}
+
+[data-bs-theme="dark"] .form-label {
+    color: var(--grape-text-dark);
+}
+
+.form-text {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Валидация форм */
+.was-validated .form-control:valid,
+.was-validated .form-select:valid {
+    border-color: var(--grape-green);
+}
+
+.was-validated .form-control:invalid,
+.was-validated .form-select:invalid {
+    border-color: var(--grape-red);
+}
+
+/* ============ КАРТОЧКИ И КОНТЕЙНЕРЫ ============ */
+
+.card {
+    border: none;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-base);
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.card-header {
+    background: var(--gradient-primary);
+    color: white;
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    font-weight: 600;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* ============ ТАБЛИЦЫ ============ */
+
+.table {
+    color: inherit;
+    margin-bottom: 0;
+}
+
+.table th {
+    font-weight: 600;
+    background-color: rgba(106, 13, 173, 0.05);
+    border-bottom: 2px solid var(--grape-primary);
+    padding: 1rem;
+}
+
+.table td {
+    padding: 0.75rem 1rem;
+    vertical-align: middle;
+    border-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(106, 13, 173, 0.03);
+}
+
+[data-bs-theme="dark"] .table th {
+    background-color: rgba(106, 13, 173, 0.2);
+}
+
+[data-bs-theme="dark"] .table-hover tbody tr:hover {
+    background-color: rgba(106, 13, 173, 0.1);
+}
+
+/* Компактные таблицы */
+.table-sm th,
+.table-sm td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.9rem;
+}
+
+/* ============ БЕЙДЖИ И ИНДИКАТОРЫ ============ */
+
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: var(--radius-full);
+}
+
+.badge.bg-primary {
+    background: var(--gradient-primary) !important;
+}
+
+.badge.bg-success {
+    background: linear-gradient(135deg, var(--grape-green), var(--grape-green-light)) !important;
+}
+
+.badge.bg-warning {
+    background: linear-gradient(135deg, var(--grape-gold), var(--grape-gold-light)) !important;
+    color: #212529;
+}
+
+.badge.bg-info {
+    background: linear-gradient(135deg, #17a2b8, #5bc0de) !important;
+}
+
+/* Цветовые индикаторы (для цвета ягод) */
+.color-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: var(--shadow-sm);
+    display: inline-block;
+    vertical-align: middle;
+    transition: all var(--transition-base);
+}
+
+.color-indicator:hover {
+    transform: scale(1.2);
+    box-shadow: var(--shadow-md);
+}
+
+/* ============ ПАГИНАЦИЯ ============ */
+
+.pagination {
+    gap: 0.5rem;
+}
+
+.page-link {
+    border: none;
+    border-radius: var(--radius-md) !important;
+    color: var(--grape-dark);
+    padding: 0.5rem 0.75rem;
+    transition: all var(--transition-base);
+}
+
+.page-link:hover {
+    background-color: rgba(106, 13, 173, 0.1);
+    color: var(--grape-primary);
+    transform: translateY(-1px);
+}
+
+.page-item.active .page-link {
+    background: var(--gradient-primary);
+    border-color: var(--grape-primary);
+}
+
+/* ============ АЛЕРТЫ ============ */
+
+.alert {
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 1rem 1.25rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.alert-dismissible .btn-close {
+    padding: 1rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.1), rgba(60, 179, 113, 0.1));
+    border-left: 4px solid var(--grape-green);
+    color: var(--grape-green);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, rgba(23, 162, 184, 0.1), rgba(91, 192, 222, 0.1));
+    border-left: 4px solid #17a2b8;
+    color: #0c5460;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, rgba(218, 165, 32, 0.1), rgba(255, 215, 0, 0.1));
+    border-left: 4px solid var(--grape-gold);
+    color: #856404;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.1), rgba(255, 107, 107, 0.1));
+    border-left: 4px solid var(--grape-red);
+    color: var(--grape-red);
+}
+
+[data-bs-theme="dark"] .alert-success {
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.2), rgba(60, 179, 113, 0.2));
+}
+
+[data-bs-theme="dark"] .alert-info {
+    background: linear-gradient(135deg, rgba(23, 162, 184, 0.2), rgba(91, 192, 222, 0.2));
+}
+
+[data-bs-theme="dark"] .alert-warning {
+    background: linear-gradient(135deg, rgba(218, 165, 32, 0.2), rgba(255, 215, 0, 0.2));
+}
+
+[data-bs-theme="dark"] .alert-danger {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(255, 107, 107, 0.2));
+}
+
+/* ============ ФУТЕР ============ */
+
+.footer-grape {
+    background: var(--gradient-primary);
+    color: white;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-grape::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.stats-badge {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius-lg);
+    padding: 0.75rem 1.25rem;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ============ ПЕРЕКЛЮЧАТЕЛЬ ТЕМЫ ============ */
+
+.theme-switcher {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.theme-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--gradient-primary);
+    border: none;
+    color: white;
+    box-shadow: var(--shadow-purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at center, rgba(255, 255, 255, 0.2), transparent 70%);
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.theme-btn:hover {
+    transform: scale(1.1) rotate(15deg);
+    box-shadow: 0 8px 25px rgba(106, 13, 173, 0.4);
+}
+
+.theme-btn:hover::before {
+    opacity: 1;
+}
+
+/* ============ АНИМАЦИИ ============ */
+
+.fade-in {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.stagger-delay-1 { animation-delay: 0.1s; }
+.stagger-delay-2 { animation-delay: 0.2s; }
+.stagger-delay-3 { animation-delay: 0.3s; }
+.stagger-delay-4 { animation-delay: 0.4s; }
+.stagger-delay-5 { animation-delay: 0.5s; }
+
+/* Пульсация */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.pulse {
+    animation: pulse 2s infinite;
+}
+
+/* ============ УТИЛИТЫ ============ */
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.shadow-sm {
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.shadow-md {
+    box-shadow: var(--shadow-md) !important;
+}
+
+.shadow-lg {
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.shadow-xl {
+    box-shadow: var(--shadow-xl) !important;
+}
+
+.rounded-lg {
+    border-radius: var(--radius-lg) !important;
+}
+
+.rounded-xl {
+    border-radius: var(--radius-xl) !important;
+}
+
+.rounded-full {
+    border-radius: var(--radius-full) !important;
+}
+
+/* Градиентный текст */
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: inline-block;
+}
+
+/* ============ ПОИСК И ФИЛЬТРЫ ============ */
+
+.search-input {
+    border-radius: var(--radius-full) !important;
+    padding-left: 3rem !important;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.search-input:focus {
+    box-shadow: var(--shadow-purple);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6c757d;
+    z-index: 4;
+}
+
+.filter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: var(--radius-full);
+    font-size: 0.875rem;
+    font-weight: 500;
+    transition: all var(--transition-base);
+}
+
+.filter-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============ ПОИСК В НАВИГАЦИИ ============ */
+
+.search-nav-container {
+    flex: 1;
+    max-width: 400px;
+    margin: 0 1rem;
+}
+
+.search-nav-form {
+    width: 100%;
+}
+
+.search-group-glass-nav {
+    display: flex;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 30px;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    height: 40px;
+}
+
+.search-input-glass-nav {
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
+    color: white;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+}
+
+.search-input-glass-nav::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.search-btn-glass-nav {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    min-height: 100%;
+}
+
+.search-btn-glass-nav:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: none;
+}
+
+.search-btn-glass-nav i {
+    font-size: 1em;
+}
+
+.search-group-glass-nav:focus-within {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+/* Адаптивность для навигационного поиска */
+@media (max-width: 992px) {
+    .search-group-glass-nav {
+        height: 45px;
+    }
+
+    .search-input-glass-nav {
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+    }
+
+    .search-btn-glass-nav {
+        width: 55px;
+    }
+}
+
+/* Для темной темы в навигации */
+[data-bs-theme="dark"] .navbar-grape .search-group-glass-nav {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============ АДАПТИВНОСТЬ ============ */
+
+@media (max-width: 768px) {
+    body.has-fixed-nav {
+        padding-top: 65px;
+    }
+
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .card-body {
+        padding: 1.25rem;
+    }
+
+    .theme-switcher {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .theme-btn {
+        width: 45px;
+        height: 45px;
+    }
+
+    .footer-grape {
+        padding: 1.5rem 0;
+    }
+
+    /* Улучшение таблиц на мобильных */
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.5rem;
+    }
+
+    /* Компактные кнопки */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-grape-primary,
+    .btn-grape-outline {
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .card-body {
+        padding: 1rem;
+    }
+
+    h1 { font-size: 1.75rem; }
+    h2 { font-size: 1.5rem; }
+    h3 { font-size: 1.25rem; }
+    h4 { font-size: 1.1rem; }
+
+    /* Еще более компактные таблицы */
+    .table-sm th,
+    .table-sm td {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .theme-switcher {
+        bottom: 15px;
+        right: 15px;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* ============ PRINT СТИЛИ ============ */
+
+@media print {
+    .navbar-grape,
+    .theme-switcher,
+    .footer-grape,
+    .btn {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+        color: black !important;
+        padding-top: 0 !important;
+    }
+
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+    }
+
+    a {
+        color: black !important;
+        text-decoration: underline !important;
+    }
+}
+
+/* ============ ДОПОЛНИТЕЛЬНЫЕ СТИЛИ ДЛЯ ВИНОГРАДНОЙ ТЕМЫ ============ */
+
+/* Виноградная иконка анимация */
+.grape-spin {
+    animation: grapeSpin 10s linear infinite;
+}
+
+@keyframes grapeSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Листья винограда украшение */
+.grape-leaf-decoration {
+    position: relative;
+}
+
+.grape-leaf-decoration::before {
+    content: "🍇";
+    position: absolute;
+    font-size: 1.5rem;
+    opacity: 0.1;
+    z-index: -1;
+}
+
+/* Градиентные разделители */
+.gradient-divider {
+    height: 2px;
+    background: var(--gradient-primary);
+    border: none;
+    margin: 2rem 0;
+}
+
+/* Акцентные элементы */
+.accent-border {
+    border-left: 4px solid var(--grape-primary);
+    padding-left: 1rem;
+}
+
+.accent-bg {
+    background: linear-gradient(135deg, rgba(106, 13, 173, 0.05), rgba(46, 139, 87, 0.05));
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+}
+
+/* ============ ЗАГРУЗКИ И СОСТОЯНИЯ ============ */
+
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(106, 13, 173, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--grape-primary);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6c757d;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+/* ============ КОНЕЦ ФАЙЛА ============ */

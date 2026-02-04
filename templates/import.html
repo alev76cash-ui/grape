@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}📤 Импорт CSV{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-info text-white py-3">
+                <h2 class="h4 mb-0">
+                    <i class="fas fa-upload me-2"></i>
+                    Импорт данных из CSV файла
+                </h2>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Важно:</strong> Файл CSV должен содержать следующие колонки:
+                    ID, Название, Назначение, Срок созревания, Морозостойкость, Цвет ягод, Вкус, Сахар, Кислотность
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+                    <div class="mb-4">
+                        <label for="csv_file" class="form-label">
+                            <i class="fas fa-file-csv me-2"></i>
+                            Выберите CSV файл
+                        </label>
+                        <input type="file" 
+                               class="form-control form-control-lg" 
+                               id="csv_file" 
+                               name="csv_file" 
+                               accept=".csv"
+                               required>
+                        <div class="invalid-feedback">
+                            Пожалуйста, выберите CSV файл.
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('index') }}" class="btn btn-outline-secondary btn-lg">
+                            <i class="fas fa-arrow-left me-2"></i>Назад
+                        </a>
+                        <button type="submit" class="btn btn-info btn-lg px-5">
+                            <i class="fas fa-upload me-2"></i>Импортировать
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Пример структуры файла -->
+                <div class="card mt-4 border-0 bg-light">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-file-excel me-2 text-success"></i>
+                            Пример структуры CSV файла:
+                        </h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Название</th>
+                                        <th>Назначение</th>
+                                        <th>Срок созревания</th>
+                                        <th>Морозостойкость</th>
+                                        <th>Цвет ягод</th>
+                                        <th>Вкус</th>
+                                        <th>Сахар</th>
+                                        <th>Кислотность</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>44</td>
+                                        <td>Новый сорт</td>
+                                        <td>Столовый</td>
+                                        <td>Ранний/120-130 дней</td>
+                                        <td>-25°C</td>
+                                        <td>Красный</td>
+                                        <td>Сладкий, гармоничный</td>
+                                        <td>18-20%</td>
+                                        <td>5-6 г/л</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ссылка на скачивание шаблона -->
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('export_csv') }}" class="btn btn-outline-success">
+                        <i class="fas fa-download me-2"></i>Скачать шаблон CSV файла
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Валидация формы
+(function () {
+    'use strict'
+    var forms = document.querySelectorAll('.needs-validation')
+    Array.prototype.slice.call(forms).forEach(function (form) {
+        form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+                event.preventDefault()
+                event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+        }, false)
+    })
+})()
+</script>
+{% endblock %}
